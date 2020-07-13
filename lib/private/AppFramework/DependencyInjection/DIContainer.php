@@ -407,16 +407,14 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 	public function queryNoFallback($name) {
 		$name = $this->sanitizeName($name);
 
-		if ($this->offsetExists($name)) {
+		if ($this->has($name)) {
+			return parent::get($name);
+		} elseif ($this['AppName'] === 'settings' && strpos($name, 'OC\\Settings\\') === 0) {
 			return parent::query($name);
-		} else {
-			if ($this['AppName'] === 'settings' && strpos($name, 'OC\\Settings\\') === 0) {
-				return parent::query($name);
-			} elseif ($this['AppName'] === 'core' && strpos($name, 'OC\\Core\\') === 0) {
-				return parent::query($name);
-			} elseif (strpos($name, \OC\AppFramework\App::buildAppNamespace($this['AppName']) . '\\') === 0) {
-				return parent::query($name);
-			}
+		} elseif ($this['AppName'] === 'core' && strpos($name, 'OC\\Core\\') === 0) {
+			return parent::query($name);
+		} elseif (strpos($name, \OC\AppFramework\App::buildAppNamespace($this['AppName']) . '\\') === 0) {
+			return parent::query($name);
 		}
 
 		throw new QueryException('Could not resolve ' . $name . '!' .

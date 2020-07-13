@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname(dirname($vendorDir));
 
 return array(
+    'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'OC\\Core\\' => array($baseDir . '/core'),
     'OC\\' => array($baseDir . '/lib/private'),
     'OCP\\' => array($baseDir . '/lib/public'),

@@ -41,6 +41,8 @@ use ReflectionException;
  * Class SimpleContainer
  *
  * SimpleContainer is a simple implementation of IContainer on basis of Pimple
+ *
+ * @todo extend \Pimple\Psr11\Container instead once we phased out our old API
  */
 class SimpleContainer extends Container implements IContainer {
 
@@ -85,6 +87,13 @@ class SimpleContainer extends Container implements IContainer {
 		}
 	}
 
+	public function has($id): bool {
+		return $this->offsetExists($id);
+	}
+
+	public function get($id) {
+		return $this->query($id);
+	}
 
 	/**
 	 * If a parameter is not registered in the container try to instantiate it

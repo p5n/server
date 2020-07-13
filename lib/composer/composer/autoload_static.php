@@ -7,6 +7,10 @@ namespace Composer\Autoload;
 class ComposerStaticInit53792487c5a8370acc0b06b1a864ff4c
 {
     public static $prefixLengthsPsr4 = array (
+        'P' => 
+        array (
+            'Psr\\Container\\' => 14,
+        ),
         'O' => 
         array (
             'OC\\Core\\' => 8,
@@ -16,6 +20,10 @@ class ComposerStaticInit53792487c5a8370acc0b06b1a864ff4c
     );
 
     public static $prefixDirsPsr4 = array (
+        'Psr\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
+        ),
         'OC\\Core\\' => 
         array (
             0 => __DIR__ . '/../../..' . '/core',
@@ -1384,6 +1392,9 @@ class ComposerStaticInit53792487c5a8370acc0b06b1a864ff4c
         'OC_Template' => __DIR__ . '/../../..' . '/lib/private/legacy/OC_Template.php',
         'OC_User' => __DIR__ . '/../../..' . '/lib/private/legacy/OC_User.php',
         'OC_Util' => __DIR__ . '/../../..' . '/lib/private/legacy/OC_Util.php',
+        'Psr\\Container\\ContainerExceptionInterface' => __DIR__ . '/..' . '/psr/container/src/ContainerExceptionInterface.php',
+        'Psr\\Container\\ContainerInterface' => __DIR__ . '/..' . '/psr/container/src/ContainerInterface.php',
+        'Psr\\Container\\NotFoundExceptionInterface' => __DIR__ . '/..' . '/psr/container/src/NotFoundExceptionInterface.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

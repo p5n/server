@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
@@ -25,12 +28,15 @@
 namespace OCP\AppFramework;
 
 use Exception;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Class QueryException
  *
+ * The class extends `NotFoundExceptionInterface` since 20.0.0
+ *
  * @package OCP\AppFramework
  * @since 8.1.0
  */
-class QueryException extends Exception {
+class QueryException extends Exception implements NotFoundExceptionInterface {
 }

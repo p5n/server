@@ -46,11 +46,17 @@ use ReflectionParameter;
  */
 class SimpleContainer extends Container implements ContainerInterface, IContainer {
 	public function get($id) {
-		return $this[$id];
+		return $this->query($id);
 	}
 
 	public function has($id): bool {
-		return isset($this[$id]);
+		try {
+			$this->query($id);
+		} catch (QueryException $e) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -117,8 +123,8 @@ class SimpleContainer extends Container implements ContainerInterface, IContaine
 
 	public function query(string $name, bool $autoload = true) {
 		$name = $this->sanitizeName($name);
-		if ($this->has($name)) {
-			return $this->get($name);
+		if ($this->offsetExists($name)) {
+			return $this->offsetGet($name);
 		}
 
 		if ($autoload) {

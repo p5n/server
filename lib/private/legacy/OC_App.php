@@ -672,15 +672,33 @@ class OC_App {
 
 	/**
 	 * @param array $entry
+	 * @depreacted 20.0.0 Register with registerAlternativeLogin on the RegistrationContext
 	 */
 	public static function registerLogIn(array $entry) {
 		self::$altLogin[] = $entry;
+		\OC::$server->getLogger()->debug('Old way to register alternative logins is no longer supported');
 	}
 
 	/**
 	 * @return array
 	 */
 	public static function getAlternativeLogIns(): array {
+		/** @var \OC\AppFramework\Bootstrap\Coordinator $bootstrapCoordinator */
+		$bootstrapCoordinator = \OC::$server->query(\OC\AppFramework\Bootstrap\Coordinator::class);
+
+		foreach ($bootstrapCoordinator->getRegistrationContext()->getAlternativeLogins() as $registration) {
+			try {
+				/** @var \OCP\Authentication\IAlternativeLogin $provider */
+				$provider = \OC::$server->query($registration['class']);
+				self::$altLogin[] = [
+					'name' => $provider->getName(),
+					'href' => $provider->getLink(),
+					'style' => $provider->getStyleClass(),
+				];
+			} catch (\OCP\AppFramework\QueryException $e) {
+			}
+		}
+
 		return self::$altLogin;
 	}
 

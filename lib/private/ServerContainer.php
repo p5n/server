@@ -120,8 +120,8 @@ class ServerContainer extends SimpleContainer {
 	public function query(string $name, bool $autoload = true) {
 		$name = $this->sanitizeName($name);
 
-		if (isset($this[$name])) {
-			return $this[$name];
+		if (parent::has($name)) {
+			return parent::get($name);
 		}
 
 		// In case the service starts with OCA\ we try to find the service in

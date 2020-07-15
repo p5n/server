@@ -30,33 +30,42 @@
 
 namespace OC\AppFramework\Utility;
 
+use ArrayAccess;
 use Closure;
+use Exception;
+use League\Container\Container;
+use League\Container\ReflectionContainer;
 use OCP\AppFramework\QueryException;
 use OCP\IContainer;
-use Pimple\Container;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionParameter;
 
 /**
- * Class SimpleContainer
- *
- * SimpleContainer is a simple implementation of IContainer on basis of Pimple
+ * SimpleContainer is a simple implementation of a container on basis of League
  */
-class SimpleContainer extends Container implements ContainerInterface, IContainer {
+class SimpleContainer implements ArrayAccess, ContainerInterface, IContainer {
+
+	/** @var Container */
+	private $container;
+
+	public function __construct() {
+		$this->container = new Container();
+
+		// Enable auto-wiring but also cache the results
+		// Ref https://container.thephpleague.com/3.x/auto-wiring/
+		$this->container->delegate(
+			(new ReflectionContainer())->cacheResolutions()
+		);
+	}
+
 	public function get($id) {
-		return $this->query($id);
+		return $this->container->get($id);
 	}
 
 	public function has($id): bool {
-		try {
-			$this->query($id);
-		} catch (QueryException $e) {
-			return false;
-		}
-
-		return true;
+		return $this->container->has($id);
 	}
 
 	/**
@@ -156,15 +165,14 @@ class SimpleContainer extends Container implements ContainerInterface, IContaine
 	 * @param bool $shared
 	 */
 	public function registerService($name, Closure $closure, $shared = true) {
-		$name = $this->sanitizeName($name);
-		if (isset($this[$name])) {
-			unset($this[$name]);
-		}
-		if ($shared) {
-			$this[$name] = $closure;
-		} else {
-			$this[$name] = $this->factory($closure);
-		}
+		$this->container->add(
+			$this->sanitizeName($name),
+			function() use ($closure) {
+				// The old Pimple factory always passed itself, so we have to keep this for BC
+				return $closure($this);
+			},
+			$shared
+		);
 	}
 
 	/**
@@ -175,9 +183,10 @@ class SimpleContainer extends Container implements ContainerInterface, IContaine
 	 * @param string $target the target that should be resolved instead
 	 */
 	public function registerAlias($alias, $target) {
-		$this->registerService($alias, function (IContainer $container) use ($target) {
-			return $container->query($target);
-		}, false);
+		// TODO: possibly no need for factory closure
+		$this->container->add($alias, function() use ($target) {
+			return $this->container->get($target);
+		}, true);
 	}
 
 	/*
@@ -189,5 +198,33 @@ class SimpleContainer extends Container implements ContainerInterface, IContaine
 			return ltrim($name, '\\');
 		}
 		return $name;
+	}
+
+	/**
+	 * @deprecated 20.0.0 use \Psr\Container\ContainerInterface::has
+	 */
+	public function offsetExists($id) {
+		return $this->container->has($id);
+	}
+
+	/**
+	 * @deprecated 20.0.0 use \Psr\Container\ContainerInterface::get
+	 */
+	public function offsetGet($id) {
+		return $this->container->get($id);
+	}
+
+	/**
+	 * @deprecated 20.0.0 use \OCP\IContainer::registerService
+	 */
+	public function offsetSet($id, $service) {
+		$this->container->add($id, $service);
+	}
+
+	/**
+	 * @deprecated 20.0.0
+	 */
+	public function offsetUnset($offset) {
+		throw new Exception("Not implemented");
 	}
 }

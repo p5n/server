@@ -1355,7 +1355,4 @@ return array(
     'OC_Template' => $baseDir . '/lib/private/legacy/OC_Template.php',
     'OC_User' => $baseDir . '/lib/private/legacy/OC_User.php',
     'OC_Util' => $baseDir . '/lib/private/legacy/OC_Util.php',
-    'Psr\\Container\\ContainerExceptionInterface' => $vendorDir . '/psr/container/src/ContainerExceptionInterface.php',
-    'Psr\\Container\\ContainerInterface' => $vendorDir . '/psr/container/src/ContainerInterface.php',
-    'Psr\\Container\\NotFoundExceptionInterface' => $vendorDir . '/psr/container/src/NotFoundExceptionInterface.php',
 );

@@ -13,8 +13,7 @@
     },
     "require": {
         "ext-json": "*",
-        "ext-pdo": "*",
-        "psr/container": "^1.0"
+        "ext-pdo": "*"
     },
     "require-dev": {
         "nextcloud/coding-standard": "^0.3.0"
